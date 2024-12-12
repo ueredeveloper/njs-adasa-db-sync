@@ -7,7 +7,7 @@
  * @requires xml2js
  * @requires dotenv
  * @requires ../queries/superficial
- * @requires ../utils/insert-or-update-superficial-sync
+ * @requires ../utils/insert-or-update-superficial
  *
  * @description
  * Esta rota conecta-se ao banco de dados SQL Server local,
@@ -19,8 +19,8 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
-const { dis_sup_query } = require("../queries/superficial");
-const insertOrUpdateSuperficialSync = require("../utils/insert-or-update-sup-sync");
+const { dis_sup_query } = require("../queries/superficial-sql");
+const insertOrUpdateSuperficialSync = require("../utils/insert-or-update-sup");
 
 require('dotenv').config();
 
@@ -40,7 +40,7 @@ const router = require("express").Router();
 /**
  * Rota GET para inserir ou atualizar dados de outorgas superficiais.
  *
- * @name GET/insert-or-update-superficial-sync
+ * @name GET/insert-or-update-superficial
  * @function
  * @memberof module:routers/insertOrUpdateSuperficialSync
  * @param {Object} req - Objeto de solicitação do Express.
@@ -49,7 +49,7 @@ const router = require("express").Router();
  * @description
  * Conecta ao banco de dados SQL Server, executa consultas em lotes, converte campos XML para JSON e insere ou atualiza os dados no PostgreSQL.
  */
-router.get("/insert-or-update-superficial-sync", async (req, res) => {
+router.get("/insert-or-update-superficial", async (req, res) => {
 
     console.log('superficial')
 

@@ -7,7 +7,7 @@
  * @requires xml2js
  * @requires dotenv
  * @requires ../queries/superficial
- * @requires ../utils/insert-or-update-superficial-sync
+ * @requires ../utils/insert-or-update-superficial
  *
  * @description
  * Esta rota conecta-se ao banco de dados SQL Server local,
@@ -19,8 +19,8 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
-const { dis_sub_tub_query } = require("../queries/subterranea-tubular");
-const insertOrUpdateSubterraneaSync = require("../utils/insert-or-update-sub-sync");
+const { dis_sub_tub_query } = require("../queries/subterranea-tubular-sql");
+const insertOrUpdateSubterraneaSync = require("../utils/insert-or-update-sub");
 
 require('dotenv').config();
 
@@ -40,7 +40,7 @@ const router = require("express").Router();
 /**
  * Rota GET para inserir ou atualizar dados de outorgas superficiais.
  *
- * @name GET/insert-or-update-superficial-sync
+ * @name GET/insert-or-update-superficial
  * @function
  * @memberof module:routers/insertOrUpdateSuperficialSync
  * @param {Object} req - Objeto de solicitação do Express.
@@ -50,7 +50,7 @@ const router = require("express").Router();
  * Conecta ao banco de dados SQL Server, executa consultas em lotes, converte campos XML para JSON e insere ou atualiza os dados no PostgreSQL.
  */
 
-router.get("/insert-or-update-subterranea-tubular-sync", async (req, res) => {
+router.get("/insert-or-update-subterranea-tubular", async (req, res) => {
 
     console.log('tubular')
 

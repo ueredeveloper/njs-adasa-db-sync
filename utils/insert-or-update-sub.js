@@ -4,7 +4,7 @@ const { Client } = require('pg');
 require('dotenv').config();
 // Extract variables from the .env file
 
-async function insertOrUpdateSubterraneaSync(users) {
+async function insertOrUpdateSubterraneaSync(grants) {
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL || null,
@@ -109,52 +109,52 @@ async function insertOrUpdateSubterraneaSync(users) {
 
     `;
 
-    for (const user of users) {
+    for (const grant of grants) {
 
       const values = [
-        user.us_id, 
-        user.us_nome, 
-        user.us_cpf_cnpj, 
-        user.us_email, 
-        user.us_cep,
-        user.us_endereco, 
-        user.us_caixa_postal, 
-        user.us_bairro,
-        user.us_telefone_1, 
-        user.emp_id,
+        grant.us_id, 
+        grant.us_nome, 
+        grant.us_cpf_cnpj, 
+        grant.us_email, 
+        grant.us_cep,
+        grant.us_endereco, 
+        grant.us_caixa_postal, 
+        grant.us_bairro,
+        grant.us_telefone_1, 
+        grant.emp_id,
 
-        user.emp_endereco, 
-        user.int_processo, 
-        user.int_id, 
-        user.int_num_ato,
-        user.int_latitude, 
-        user.int_longitude, 
-        user.int_shape, 
-        user.int_data_publicacao, 
-        user.int_data_vencimento,
-        user.ti_id,
-        user.ti_descricao, 
+        grant.emp_endereco, 
+        grant.int_processo, 
+        grant.int_id, 
+        grant.int_num_ato,
+        grant.int_latitude, 
+        grant.int_longitude, 
+        grant.int_shape, 
+        grant.int_data_publicacao, 
+        grant.int_data_vencimento,
+        grant.ti_id,
+        grant.ti_descricao, 
         
-        user.sp_id, 
-        user.sp_descricao, 
-        user.tp_id,
-        user.tp_descricao,
-        user.to_id, 
-        user.to_descricao, 
-        user.bh_id, 
-        user.bh_nome,
-        user.uh_id, 
-        user.uh_nome, 
+        grant.sp_id, 
+        grant.sp_descricao, 
+        grant.tp_id,
+        grant.tp_descricao,
+        grant.to_id, 
+        grant.to_descricao, 
+        grant.bh_id, 
+        grant.bh_nome,
+        grant.uh_id, 
+        grant.uh_nome, 
 
-        user.hg_codigo,
-        user.hg_sistema,
-        user.hg_subsistema,
-        user.fin_finalidade,
-        user.dt_demanda
+        grant.hg_codigo,
+        grant.hg_sistema,
+        grant.hg_subsistema,
+        grant.fin_finalidade,
+        grant.dt_demanda
       ];
 
       await client.query(query, values);
-      console.log(`Processed user: ${user.us_nome}`);
+      console.log(`Processed user: ${grant.us_nome}`);
 
     }
 

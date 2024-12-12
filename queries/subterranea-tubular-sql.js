@@ -1,7 +1,7 @@
 exports.dis_sub_tub_query = function (less, grater) {
     return `
     USE SRH;
-SELECT 
+	SELECT 
 			/* usuário */
            U.ID_USUARIO AS us_id,
            U.NOME AS us_nome,

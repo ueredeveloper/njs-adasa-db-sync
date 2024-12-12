@@ -19,9 +19,9 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
+const { lancamento_efluentes } = require("../queries/lancamento-efluentes-sql");
+const insertOrUpdateLancamentoEfluentes = require("../utils/insert-or-update-lanc-efl");
 
-const { dis_sub_por_query } = require("../queries/subterranea-manual");
-const insertOrUpdateSubterraneaSync = require("../utils/insert-or-update-sub-sync");
 
 require('dotenv').config();
 
@@ -43,17 +43,16 @@ const router = require("express").Router();
  *
  * @name GET/insert-or-update-superficial-sync
  * @function
- * @memberof module:routers/insertOrUpdateSuperficialSync
+ * @memberof module:routers/insertOrUpdateBarragem
  * @param {Object} req - Objeto de solicitação do Express.
  * @param {Object} res - Objeto de resposta do Express.
  *
  * @description
  * Conecta ao banco de dados SQL Server, executa consultas em lotes, converte campos XML para JSON e insere ou atualiza os dados no PostgreSQL.
  */
+router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
 
-router.get("/insert-or-update-subterranea-manual-sync", async (req, res) => {
-
-    console.log('manual')
+    console.log('atualiza lançamento de efluentes');
     sql.connect(config, function (err) {
 
         if (err) console.log(err);
@@ -69,50 +68,32 @@ router.get("/insert-or-update-subterranea-manual-sync", async (req, res) => {
             let begin = new Date();
 
             let time = 3000;
-            for (let i = 0; i <= 22000; i = i + 200) {
+                for (let i = 0; i <= 22000; i = i + 200) {
+                //for (let i = 11000; i <= 23000; i = i + 200) {
+
                 sleep(time).then(() => {
                     let ii = i + 200
                     let now = new Date()
-                    let _query = dis_sub_por_query(i, ii);
-               
+                    console.log('upsert lancamento -----', i, ii, 'seg: ', begin.getSeconds(), 'now: ', now.getSeconds());
+
+                    //let _query = dis_sub_por_query(i, ii);
+                    let _query = lancamento_efluentes(i, ii);
+                    // requisição
+
                     request.query(_query, async function (err, recordset) {
                         if (err) console.log(err);
 
                         let outorgas = recordset.recordsets[0].map((outorga, index) => {
-                            
-                            if (outorga.fin_finalidade != null) {
 
-                                // conversão xml to json
-
-                                xml2js.parseString(
-                                    outorga.fin_finalidade,
-                                    { explicitArray: false, normalizeTags: true, explicitRoot: false }, (err, result) => {
-                                        if (err) {
-                                            console.log("erro: ", outorga.us_nome, outorga.int_id)
-                                            throw err
-                                        }
-                                        outorga.fin_finalidade = result
-                                    });
-                            }
-                            if (outorga.dt_demanda != null) {
-                                // conversão xml to json
-
-                                xml2js.parseString(outorga.dt_demanda,
-                                    { explicitArray: false, normalizeTags: true, explicitRoot: false }, (err, result) => {
-                                        if (err) {
-                                            console.log("erro: ", outorga.us_nome, outorga.int_id)
-                                            throw err
-                                        }
-                                        outorga.dt_demanda = result
-                                    });
-                            }
+                            console.log(outorga.int_id, index)
+                            // conversão para o formato postgres
+                            let { x, y } = outorga.int_shape.points[0]
+                            outorga.int_shape = `POINT(${x} ${y})`;
 
                             return outorga;
                         });
 
-                        console.log(outorgas.length)
-
-                        insertOrUpdateSubterraneaSync(outorgas)
+                        insertOrUpdateLancamentoEfluentes(outorgas);
 
                     });
 
@@ -125,6 +106,8 @@ router.get("/insert-or-update-subterranea-manual-sync", async (req, res) => {
         saveEveryHundred();
 
     });
+
+
 });
 
 module.exports = router;
