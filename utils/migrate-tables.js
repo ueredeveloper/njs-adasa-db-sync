@@ -9,10 +9,11 @@ const wellknown = require('wellknown'); // GeoJSON to WKT converter
 
 /**
  * Migração de tabelas estáticas como Unidades Hidrográficas, Bacias Hidrográficas, Hidrogeo Fraturado e Poroso
- * Como usar:  Mostre a função que deve ser chamada, por exemplo: migrateUnidadeHidrografica (), e no console digite node utils/migrate-tables.js
+ * Como usar:  Mostre a função que deve ser chamada, por exemplo: migrateUnidadesHidrograficas (), 
+ * e no console digite node utils/migrate-tables.js
  */
 
-async function migrateFraturado() {
+async function migrateHidrogeoFraturado() {
     // Configuração para o banco PostgreSQL
     const pgClient = new Client({
         connectionString: process.env.DATABASE_URL,
@@ -38,7 +39,7 @@ async function migrateFraturado() {
         await pgClient.connect();
 
         // Conecta ao SQL Server
-        await sql.connect(sqlConfig);
+       /* await sql.connect(sqlConfig);
 
         // Query no SQL Server
         const query = `
@@ -77,27 +78,81 @@ async function migrateFraturado() {
 
         const result = await sql.query(query);
 
-        const records = result.recordset;
+        const records = result.recordset;*/
+
+        // Migrando a partir de um json.
+        const filePath = path.join(__dirname, '../json/hidrogeo-fraturado.json');
+        const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+        console.log(records.length) 
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
             const insertQuery = `
                 INSERT INTO hidrogeo_fraturado (
-                    objectid, uh_nome, uh_codigo, bacia_nome, uh_label, nome, hidrogeo, vazao,
-                    area_sq_m, sistema, subsistema, ref, rr_cm_ano, esp_raso, ifr, rpr_cm_an,
-                    esp_profun, ifp, rpp_cm_an, rp_cm_ano, f_rpd, rpd, re_cm_an, cod_plan, shape, gdb_geomattr_data
+                        objectid,
+                        uh_nome,
+                        uh_codigo,
+                        bacia_nome,
+                        uh_label,
+                        nome,
+                        hidrogeo,
+                        vazao,
+                        area_sq_m,
+                        sistema,
+
+                        subsistema,
+                        ref,
+                        rr_cm_ano,
+                        esp_raso,
+                        ifr,
+                        rpr_cm_an,
+                        esp_profun,
+                        ifp,
+                        rpp_cm_an,
+                        rp_cm_ano,
+
+                        f_rpd,
+                        rpd,
+                        re_cm_an,
+                        cod_plan,
+                        shape,
+                        gdb_geomattr_data
                 ) VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, 
-                    $17, $18, $19, $20, $21, $22, $23, $24, $25, $26
+                    $17, $18, $19, $20, $21, $22, $23, $24, ST_GeomFromWKB($25, 4674), $26
                 )
             `;
 
             const values = [
-                record.objectid, record.uh_nome, record.uh_codigo, record.bacia_nome, record.uh_label, record.nome,
-                record.hidrogeo, record.vazao, record.area_sq_m, record.sistema, record.subsistema, record.ref,
-                record.rr_cm_ano, record.esp_raso, record.ifr, record.rpr_cm_an, record.esp_profun, record.ifp,
-                record.rpp_cm_an, record.rp_cm_ano, record.f_rpd, record.rpd, record.re_cm_an, record.cod_plan,
-                record.shape, record.gdb_geomattr_data,
+                record.objectid, 
+                record.uh_nome, 
+                record.uh_codigo, 
+                record.bacia_nome, 
+                record.uh_label, 
+                record.nome,
+                record.hidrogeo, 
+                record.vazao, 
+                record.area_sq_m, 
+                record.sistema, 
+                record.subsistema, 
+                
+                record.ref,
+                record.rr_cm_ano, 
+                record.esp_raso, 
+                record.ifr, 
+                record.rpr_cm_an, 
+                record.esp_profun, 
+                record.ifp,
+                record.rpp_cm_an, 
+                record.rp_cm_ano, 
+                record.f_rpd, 
+                record.rpd, 
+
+                record.re_cm_an, 
+                record.cod_plan,
+                Buffer.from(record.shape, 'hex'),
+                record.gdb_geomattr_data
             ];
 
             await pgClient.query(insertQuery, values);
@@ -142,45 +197,37 @@ async function migratePoroso() {
         // Conecta ao SQL Server
         await sql.connect(sqlConfig);
 
-        // Query no SQL Server
-        const query = `
-            SELECT 
-                [OBJECTID] AS objectid,
-                [uh_nome] AS uh_nome,
-                [uh_codigo] AS uh_codigo,
-                [bacia_nome] AS bacia_nome,
-                [UH_LABEL] AS uh_label,
-                [Sistema] AS sistema,
-                [Q_media] AS q_media,
-                [Area_sq_m] AS area_sq_m,
-                [b_m] AS b_m,
-                [ne] AS ne,
-                [RP] AS rp,
-                [Re] AS re,
-                [RR] AS rr,
-                [RE_cm_ano] AS re_cm_ano,
-                [Cod_plan] AS cod_plan,
-                [Shape].ToString() AS shape,
-                [GDB_GEOMATTR_DATA] AS gdb_geomattr_data
-            FROM [SRH].[gisadmin].[HIDROGEO_POROSO_UH]
-        `;
-
-        const result = await sql.query(query);
-
-        const records = result.recordset;
+          // Migrando a partir de um json.
+          const filePath = path.join(__dirname, '../json/hidrogeo-poroso.json');
+          const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
 
             const insertQuery = `
                 INSERT INTO hidrogeo_poroso (
-                    objectid, uh_nome, uh_codigo, bacia_nome, uh_label, sistema, 
-                    q_media, area_sq_m, b_m, ne, rp, re, rr, re_cm_ano, 
-                    cod_plan, shape, gdb_geomattr_data
+                    objectid, 
+                    uh_nome, 
+                    uh_codigo, 
+                    bacia_nome, 
+                    uh_label, 
+                    sistema, 
+                    q_media, 
+                    area_sq_m, 
+                    b_m, 
+                    ne, 
+
+                    rp, 
+                    re, 
+                    rr, 
+                    re_cm_ano, 
+                    cod_plan, 
+                    shape, 
+                    gdb_geomattr_data
                 ) VALUES (
                     $1, $2, $3, $4, $5, $6, 
                     $7, $8, $9, $10, $11, $12, $13, $14, 
-                    $15, $16, $17
+                    $15, ST_GeomFromWKB($16, 4674), $17
                 )
             `;
 
@@ -195,12 +242,13 @@ async function migratePoroso() {
                 record.area_sq_m,
                 record.b_m,
                 record.ne,
+
                 record.rp,
                 record.re,
                 record.rr,
                 record.re_cm_ano,
                 record.cod_plan,
-                record.shape,
+                Buffer.from(record.shape, 'hex'),
                 record.gdb_geomattr_data
             ];
 
@@ -218,7 +266,7 @@ async function migratePoroso() {
     }
 }
 
-async function migrateBaciaHidrografica() {
+async function migrateBaciasHidrograficas() {
     // Configuração para o banco PostgreSQL
     const pgClient = new Client({
         connectionString: process.env.DATABASE_URL,
@@ -230,45 +278,32 @@ async function migrateBaciaHidrografica() {
         ssl: { rejectUnauthorized: false },
     });
 
-    // Configuração para o banco SQL Server
-    const sqlConfig = {
-        user: process.env.ADASA_USERNAME,
-        password: process.env.ADASA_PASSWORD,
-        server: process.env.ADASA_HOST,
-        database: process.env.ADASA_DATABASE,
-        trustServerCertificate: true,
-    };
+   
 
     try {
         // Conecta ao PostgreSQL
         await pgClient.connect();
 
-        // Conecta ao SQL Server
-        await sql.connect(sqlConfig);
+        // Migrando a partir de um json.
+        const filePath = path.join(__dirname, '../json/bacias-hidrograficas.json');
+        const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-        // Query no SQL Server
-        const query = `
-            SELECT 
-                [OBJECTID_1] AS objectid,
-                [bacia_nome],
-                [shape_leng],
-                [Shape].ToString() AS shape,
-                [GDB_GEOMATTR_DATA] AS gdb_geomattr_data,
-                [bacia_cod]
-            FROM [SRH].[gisadmin].[BACIAS_HIDROGRAFICAS]
-        `;
+        records.slice(1).map(r=> console.log(r))
 
-        const result = await sql.query(query);
-
-        const records = result.recordset;
+        
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
             const insertQuery = `
                 INSERT INTO bacias_hidrograficas (
-                objectid, bacia_nome, shape_leng, shape, gdb_geomattr_data, bacia_cod
+                objectid, 
+                bacia_nome, 
+                shape_leng, 
+                shape, 
+                gdb_geomattr_data, 
+                bacia_cod
                 ) VALUES (
-                    $1, $2, $3, $4, $5, $6
+                    $1, $2, $3, ST_GeomFromWKB($4, 4674), $5, $6
                 )   
             `;
 
@@ -276,7 +311,7 @@ async function migrateBaciaHidrografica() {
                 record.objectid,
                 record.bacia_nome,
                 record.shape_leng,
-                record.shape,
+                Buffer.from(record.shape, 'hex'),
                 record.gdb_geomattr_data,
                 record.bacia_cod,
             ];
@@ -295,10 +330,10 @@ async function migrateBaciaHidrografica() {
     }
 }
 /**
- * Esta será migrada a partir de um json que tem as vazões mensais. Da forma que está no SQL Server esta mesma tabela está
- * sem vazões.
+ * Esta tabela será migrada a partir de um json que tem, além das informações no banco de dados SQL Server, 
+ * as vazões mensais de cada polígono. 
  */
-async function migrateUnidadeHidrografica() {
+async function migrateUnidadesHidrograficas() {
     // Configuração para o banco PostgreSQL
     const pgClient = new Client({
         connectionString: process.env.DATABASE_URL,
@@ -322,6 +357,8 @@ async function migrateUnidadeHidrografica() {
     try {
         // Conecta ao PostgreSQL
         await pgClient.connect();
+
+        /* Se fosse buscar a uh no banco Sql Server da Adasa.
 
         // Conecta ao SQL Server
         await sql.connect(sqlConfig);
@@ -345,14 +382,14 @@ async function migrateUnidadeHidrografica() {
                 ,[Area_Km_sq] area_km_sq
                 ,[ID_BACIA] id_bacia
             FROM [SRH].[gisadmin].[UNIDADES_HIDROGRAFICAS]
-        `;
+        `;*/
 
         //const result = await sql.query(query);
 
         // const records = result.recordset;
 
 
-        // Read and parse the JSON file
+        // Migrando a partir de um json.
         const filePath = path.join(__dirname, '../json/unidades-hidrograficas.json');
         const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
@@ -444,6 +481,9 @@ async function migrateUnidadeHidrografica() {
     }
 }
 
-migrateUnidadeHidrografica();
+//migrateUnidadesHidrograficas();
+//migrateBaciasHidrograficas();
+//migrateHidrogeoFraturado();
+//migratePoroso();
 
 
