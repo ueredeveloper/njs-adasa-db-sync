@@ -152,6 +152,7 @@ async function insertOrUpdateLancamentoEfluentes(grants) {
         grant.area_atendimento
       ];
       await client.query(query, values);
+      console.log(`Processed user: ${grant.us_nome}`);
     }
   } finally {
     await client.end();

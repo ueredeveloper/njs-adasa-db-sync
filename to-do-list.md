@@ -6,3 +6,5 @@
 - Há várias barragens com o campo `bh_id` nulo, que precisam ser tratadas.  
 
 
+**31/01/2025**
+- [X] Migrar as tabelas de polígonos para o banco supabase (j-water-grants)

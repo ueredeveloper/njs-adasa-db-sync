@@ -19,6 +19,7 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
+const { createClient } = require('@supabase/supabase-js');
 const { dis_bar_query } = require("../queries/barragem-sql");
 const insertOrUpdateBarragens = require("../utils/insert-or-update-bar");
 
@@ -27,7 +28,7 @@ const insertOrUpdateBarragens = require("../utils/insert-or-update-bar");
 require('dotenv').config();
 
 // Variáveis de ambiente para configuração do banco
-const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD } = process.env;
+const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD, SUPABASE_URL, SUPABASE_KEY } = process.env;
 // Configurações do banco SQL Server
 const config = {
     user: ADASA_USERNAME,
@@ -36,6 +37,8 @@ const config = {
     database: ADASA_DATABASE,
     trustServerCertificate: true,
 };
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const router = require("express").Router();
 
@@ -70,8 +73,8 @@ router.get("/insert-or-update-barragem", async (req, res) => {
             let begin = new Date();
 
             let time = 3000;
-            for (let i = 0; i <= 22000; i = i + 200) {
-               // for (let i = 11000; i <= 11200; i = i + 200) {
+            //for (let i = 0; i <= 22000; i = i + 200) {
+            for (let i = 10800; i <= 12200; i = i + 200) {
 
                 sleep(time).then(() => {
                     let ii = i + 200
@@ -99,8 +102,35 @@ router.get("/insert-or-update-barragem", async (req, res) => {
 
                         console.log(outorgas.length)
 
+                        // ATUALIZAÇÃO 1
                         // Envia lista de outorgas para inserir ou atualizar no banco postgres
-                        insertOrUpdateBarragens(outorgas);
+                        //insertOrUpdateBarragens(outorgas);
+
+                        // ATUALIZAÇÃO 2
+                        // Atualização do banco supabase postgres
+                        /*const { data, error } = await supabase
+                            .from('barragem')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }*/
+
+                        // ATUALIZAÇÃO 3
+                        // Atualização do banco supabase postgres - db=name=j-water-grants
+                        const { data, error } = await supabase
+                            .from('barragem_sync')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }
 
                     });
 

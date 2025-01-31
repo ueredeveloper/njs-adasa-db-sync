@@ -1,12 +1,12 @@
 const sql = require("mssql");
-
+const { createClient } = require('@supabase/supabase-js');
 const { lancamento_pluviais } = require("../queries/lancamento-pluviais-sql");
 const fetchInsertOrUpdateLancamentoPluviais = require("../utils/insert-or-update-lanc-plu");
 
 require('dotenv').config();
 
 // Variáveis de ambiente para configuração do banco
-const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD } = process.env;
+const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD, SUPABASE_URL, SUPABASE_KEY } = process.env;
 // Configurações do banco SQL Server
 const config = {
     user: ADASA_USERNAME,
@@ -15,6 +15,8 @@ const config = {
     database: ADASA_DATABASE,
     trustServerCertificate: true,
 };
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const router = require("express").Router();
 
@@ -49,8 +51,8 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
             let begin = new Date();
 
             let time = 3000;
-            for (let i = 0; i <= 22000; i = i + 200) {
-                //para testes  for (let i = 10000; i <= 11000; i = i + 200) {
+            // for (let i = 0; i <= 22000; i = i + 200) {
+            for (let i = 10000; i <= 15000; i = i + 200) {
 
                 sleep(time).then(() => {
                     let ii = i + 200
@@ -70,13 +72,41 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
                             // conversão para o formato postgres
                             let { x, y } = outorga.int_shape.points[0]
                             outorga.int_shape = `POINT(${x} ${y})`;
-                            outorga.ti_id = outorga.ti_id[0]
-                            outorga.ti_descricao = outorga.ti_descricao[0]
+                            //outorga.ti_id = outorga.ti_id[0]
+                            //outorga.ti_descricao = outorga.ti_descricao[0]
 
                             return outorga;
                         })
 
-                        fetchInsertOrUpdateLancamentoPluviais(outorgas);
+                        // ATUALIZAÇÃO 1
+                        // atualização do banco azure postgres adasa
+                        //fetchInsertOrUpdateLancamentoPluviais(outorgas);
+
+                        // ATUALIZAÇÃO 2
+                        // Atualização do banco supabase postgres
+                       /* const { data, error } = await supabase
+                            .from('lancamento_pluviais')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }*/
+
+                        // ATUALIZAÇÃO 3    
+                        // Atualização do banco supabase postgres - db=name=j-water-grants
+                        const { data, error } = await supabase
+                            .from('lancamento_pluviais_sync')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }
 
 
                     });

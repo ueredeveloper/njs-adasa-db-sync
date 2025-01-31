@@ -28,7 +28,8 @@ exports.lancamento_efluentes =  function (less, grater){
         I.DT_PUBLICACAO AS int_data_publicacao,
         I.DT_VENCIMENTO AS int_data_vencimento, 
 
-        /* tipo interferência */ TI.ID_TIPO_INTERFERENCIA AS ti_id,
+        /* tipo interferência */ 
+        TI.ID_TIPO_INTERFERENCIA AS ti_id,
         TI.DESCRICAO AS ti_descricao, 
         /* situação: arquivado, análise... */ 
         SP.ID_SITUACAO AS sp_id,

@@ -12,7 +12,7 @@ exports.dis_sub_tub_query = function (less, grater) {
 		   U.CAIXA_POSTAL AS us_caixa_postal,
 		   U.BAIRRO AS us_bairro,
 		   U.TELEFONE_1 AS us_telefone_1,
-           U.TELEFONE_2 AS us_telefone_2,
+           --U.TELEFONE_2 AS us_telefone_2,
 		   /* endereço */
            E.ID_EMPREENDIMENTO AS emp_id,
            E.ENDERECO AS emp_endereco,
@@ -46,7 +46,7 @@ exports.dis_sub_tub_query = function (less, grater) {
 			 ELSE 'TUBULAR'
 			  END AS tp_descricao,
 		   /* tipo outorga: direito, prévia, registro */
-		   TIPO_OUT.ID_TIPO_OUTORGA AS to_tipo_outorga,
+		   TIPO_OUT.ID_TIPO_OUTORGA AS to_id,
 		   TIPO_OUT.DESCRICAO AS to_descricao,
 		   /* bacia **/
            BH.OBJECTID_1 AS bh_id,

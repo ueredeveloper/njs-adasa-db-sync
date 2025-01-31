@@ -181,6 +181,7 @@ async function fetchInsertOrUpdateLancamentoPluviais(grants) {
       ];
 
       await client.query(query, values);
+      console.log(`Processed user: ${grant.ti_id, grant.us_nome}`);
     }
   } finally {
     await client.end();

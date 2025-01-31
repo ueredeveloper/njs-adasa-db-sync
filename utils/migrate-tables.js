@@ -1,11 +1,18 @@
 // Importa os módulos necessários
 const { Client } = require('pg');
 const sql = require('mssql');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const fs = require('fs');        // File system
 const path = require('path');    // File path utilities
 const wellknown = require('wellknown'); // GeoJSON to WKT converter
+
+
+const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD, SUPABASE_URL, SUPABASE_KEY } = process.env;
+
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /**
  * Migração de tabelas estáticas como Unidades Hidrográficas, Bacias Hidrográficas, Hidrogeo Fraturado e Poroso
@@ -39,52 +46,52 @@ async function migrateHidrogeoFraturado() {
         await pgClient.connect();
 
         // Conecta ao SQL Server
-       /* await sql.connect(sqlConfig);
-
-        // Query no SQL Server
-        const query = `
-            SELECT 
-                [OBJECTID] AS objectid,
-                [uh_nome] AS un_nome,
-                [uh_codigo] AS uh_codigo,
-                [bacia_nome] AS bacia_nome,
-                [UH_LABEL] AS uh_label,
-                [NOME] AS nome,
-                [Hidrogeo] AS hidrogeo,
-                [Vazão] AS vazao,
-                [Area_sq_m] AS area_sq_m,
-                [Sistema] AS sistema,
-
-                [Subsistema] AS subsistema,
-                [REF] AS ref,
-                [RR_cm_ano] AS rr_cm_ano,
-                [Esp_raso] AS esp_raso,
-                [Ifr] AS ifr,
-                [RPR_cm_an] AS rpr_cm_an,
-                [Esp_profun] AS esp_profun,
-                [Ifp] AS ifp,
-                [RPP_cm_an] AS rpp_cm_an,
-                [RP_cm_ano] AS rp_cm_ano,
-                
-                [F_RPD] AS f_rpd,
-                [RPD] AS rpd,
-                [RE_cm_an] AS re_cm_an,
-                [Cod_plan] AS cod_plan,
-                [Shape].ToString() AS shape,
-                [GDB_GEOMATTR_DATA] AS gdb_geomattr_data
-
-            FROM [SRH].[gisadmin].[HIDROGEO_FRATURADO_UH]
-        `;
-
-        const result = await sql.query(query);
-
-        const records = result.recordset;*/
+        /* await sql.connect(sqlConfig);
+ 
+         // Query no SQL Server
+         const query = `
+             SELECT 
+                 [OBJECTID] AS objectid,
+                 [uh_nome] AS un_nome,
+                 [uh_codigo] AS uh_codigo,
+                 [bacia_nome] AS bacia_nome,
+                 [UH_LABEL] AS uh_label,
+                 [NOME] AS nome,
+                 [Hidrogeo] AS hidrogeo,
+                 [Vazão] AS vazao,
+                 [Area_sq_m] AS area_sq_m,
+                 [Sistema] AS sistema,
+ 
+                 [Subsistema] AS subsistema,
+                 [REF] AS ref,
+                 [RR_cm_ano] AS rr_cm_ano,
+                 [Esp_raso] AS esp_raso,
+                 [Ifr] AS ifr,
+                 [RPR_cm_an] AS rpr_cm_an,
+                 [Esp_profun] AS esp_profun,
+                 [Ifp] AS ifp,
+                 [RPP_cm_an] AS rpp_cm_an,
+                 [RP_cm_ano] AS rp_cm_ano,
+                 
+                 [F_RPD] AS f_rpd,
+                 [RPD] AS rpd,
+                 [RE_cm_an] AS re_cm_an,
+                 [Cod_plan] AS cod_plan,
+                 [Shape].ToString() AS shape,
+                 [GDB_GEOMATTR_DATA] AS gdb_geomattr_data
+ 
+             FROM [SRH].[gisadmin].[HIDROGEO_FRATURADO_UH]
+         `;
+ 
+         const result = await sql.query(query);
+ 
+         const records = result.recordset;*/
 
         // Migrando a partir de um json.
         const filePath = path.join(__dirname, '../json/hidrogeo-fraturado.json');
         const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-        console.log(records.length) 
+        console.log(records.length)
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
@@ -125,31 +132,31 @@ async function migrateHidrogeoFraturado() {
             `;
 
             const values = [
-                record.objectid, 
-                record.uh_nome, 
-                record.uh_codigo, 
-                record.bacia_nome, 
-                record.uh_label, 
+                record.objectid,
+                record.uh_nome,
+                record.uh_codigo,
+                record.bacia_nome,
+                record.uh_label,
                 record.nome,
-                record.hidrogeo, 
-                record.vazao, 
-                record.area_sq_m, 
-                record.sistema, 
-                record.subsistema, 
-                
-                record.ref,
-                record.rr_cm_ano, 
-                record.esp_raso, 
-                record.ifr, 
-                record.rpr_cm_an, 
-                record.esp_profun, 
-                record.ifp,
-                record.rpp_cm_an, 
-                record.rp_cm_ano, 
-                record.f_rpd, 
-                record.rpd, 
+                record.hidrogeo,
+                record.vazao,
+                record.area_sq_m,
+                record.sistema,
+                record.subsistema,
 
-                record.re_cm_an, 
+                record.ref,
+                record.rr_cm_ano,
+                record.esp_raso,
+                record.ifr,
+                record.rpr_cm_an,
+                record.esp_profun,
+                record.ifp,
+                record.rpp_cm_an,
+                record.rp_cm_ano,
+                record.f_rpd,
+                record.rpd,
+
+                record.re_cm_an,
                 record.cod_plan,
                 Buffer.from(record.shape, 'hex'),
                 record.gdb_geomattr_data
@@ -197,9 +204,9 @@ async function migratePoroso() {
         // Conecta ao SQL Server
         await sql.connect(sqlConfig);
 
-          // Migrando a partir de um json.
-          const filePath = path.join(__dirname, '../json/hidrogeo-poroso.json');
-          const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        // Migrando a partir de um json.
+        const filePath = path.join(__dirname, '../json/hidrogeo-poroso.json');
+        const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
@@ -278,7 +285,7 @@ async function migrateBaciasHidrograficas() {
         ssl: { rejectUnauthorized: false },
     });
 
-   
+
 
     try {
         // Conecta ao PostgreSQL
@@ -288,12 +295,15 @@ async function migrateBaciasHidrograficas() {
         const filePath = path.join(__dirname, '../json/bacias-hidrograficas.json');
         const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-        records.slice(1).map(r=> console.log(r))
+        records.slice(1).map(r => console.log(r))
 
-        
+
 
         // Insere os dados no PostgreSQL
         for (const record of records) {
+
+            // ATUALIZAÇÃO 1 - No banco azure adasa
+
             const insertQuery = `
                 INSERT INTO bacias_hidrograficas (
                 objectid, 
@@ -317,6 +327,8 @@ async function migrateBaciasHidrograficas() {
             ];
 
             await pgClient.query(insertQuery, values);
+
+
         }
 
         console.log("Dados inseridos com sucesso!");
@@ -396,7 +408,7 @@ async function migrateUnidadesHidrograficas() {
         console.log(records.length)
 
         // Insere os dados no PostgreSQL
-        
+
         for (const record of records) {
             const insertQuery = `
                 INSERT INTO unidades_hidrograficas (
@@ -451,7 +463,7 @@ async function migrateUnidadesHidrograficas() {
                 record.gdb_geomattr_data,
                 record.area_km_sq,
                 record.id_bacia,
-                
+
                 record.qmm_jan,
                 record.qmm_fev,
                 record.qmm_mar,
@@ -468,7 +480,7 @@ async function migrateUnidadesHidrograficas() {
 
             await pgClient.query(insertQuery, values); // 434 line
         }
-        
+
 
         //  console.log("Dados inseridos com sucesso!");
 
@@ -481,6 +493,126 @@ async function migrateUnidadesHidrograficas() {
     }
 }
 
+// configurações do banco
+const config = {
+    user: ADASA_USERNAME,
+    password: ADASA_PASSWORD,
+    server: ADASA_HOST,
+    database: ADASA_DATABASE,
+    trustServerCertificate: true,
+};
+
+/**
+ * Busca os polígonos no banco de dados local (Sql Server) e migra para outro banco supabase (Postgres)
+ */
+async function migrateFromSupabaseUnidadesHidrograficas() {
+
+    // Leitura dos polígonos em formato Json.
+    const filePath = path.join(__dirname, '../json/unidades-hidrograficas.json');
+    const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+    // Migração dos polígonos lidos para outro banco (Supabase, postgres)
+    for (const record of records) {
+        // Migra os polígonos selecionados para outro banco de dados, no caso j-water-grantes - postgres
+        const { data, error } = await supabase
+            .from('unidades_hidrograficas')
+            .upsert(record,
+                { onConflict: 'objectid' })
+            .select()
+        if (error) {
+            console.log(JSON.stringify({ message: error }))
+        } else {
+            console.log(JSON.stringify({ message: 'ok' }))
+        }
+    }
+
+}
+
+/**
+ * Busca os polígonos no banco de dados local (Sql Server) e migra para outro banco supabase (Postgres)
+ */
+async function migrateFromSupabaseBaciasHidrograficas () {
+
+    // Leitura dos polígonos em formato Json.
+    const filePath = path.join(__dirname, '../json/bacias-hidrograficas.json');
+    const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+    // Migração dos polígonos lidos para outro banco (Supabase, postgres)
+    for (const record of records) {
+        // Migra os polígonos selecionados para outro banco de dados, no caso j-water-grantes - postgres
+        const { data, error } = await supabase
+            .from('bacias_hidrograficas')
+            .upsert(record,
+                { onConflict: 'objectid' })
+            .select()
+        if (error) {
+            console.log(JSON.stringify({ message: error }))
+        } else {
+            console.log(JSON.stringify({ message: 'ok' }))
+        }
+    }
+
+}
+
+/**
+ * Busca os polígonos no banco de dados local (Sql Server) e migra para outro banco supabase (Postgres)
+ */
+async function migrateFromSupabaseHidrogeoFraturado () {
+
+    // Leitura dos polígonos em formato Json.
+    const filePath = path.join(__dirname, '../json/hidrogeo-fraturado.json');
+    const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+    // Migração dos polígonos lidos para outro banco (Supabase, postgres)
+    for (const record of records) {
+        // Migra os polígonos selecionados para outro banco de dados, no caso j-water-grantes - postgres
+        const { data, error } = await supabase
+            .from('hidrogeo_fraturado')
+            .upsert(record,
+                { onConflict: 'objectid' })
+            .select()
+        if (error) {
+            console.log(JSON.stringify({ message: error }))
+        } else {
+            console.log(JSON.stringify({ message: 'ok' }))
+        }
+    }
+
+}
+
+/**
+ * Busca os polígonos no banco de dados local (Sql Server) e migra para outro banco supabase (Postgres)
+ */
+async function migrateFromSupabaseHidrogeoPoroso () {
+
+    // Leitura dos polígonos em formato Json.
+    const filePath = path.join(__dirname, '../json/hidrogeo-poroso.json');
+    const records = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+    // Migração dos polígonos lidos para outro banco (Supabase, postgres)
+    for (const record of records) {
+        // Migra os polígonos selecionados para outro banco de dados, no caso j-water-grantes - postgres
+        const { data, error } = await supabase
+            .from('hidrogeo_poroso')
+            .upsert(record,
+                { onConflict: 'objectid' })
+            .select()
+        if (error) {
+            console.log(JSON.stringify({ message: error }))
+        } else {
+            console.log(JSON.stringify({ message: 'ok' }))
+        }
+    }
+
+}
+
+//31/01/2025 - Foi feito a migração destas tabelas para o banco postgres supabase (j-water-grants)
+//migrateFromSupabaseUnidadesHidrograficas();
+//migrateFromSupabaseBaciasHidrograficas ();
+//migrateFromSupabaseHidrogeoFraturado ()
+//migrateFromSupabaseHidrogeoPoroso();
+
+// Migração para o banco postgres - adasa
 //migrateUnidadesHidrograficas();
 //migrateBaciasHidrograficas();
 //migrateHidrogeoFraturado();

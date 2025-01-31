@@ -19,13 +19,14 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
+const { createClient } = require('@supabase/supabase-js');
 const { dis_sub_tub_query } = require("../queries/subterranea-tubular-sql");
 const insertOrUpdateSubterraneaSync = require("../utils/insert-or-update-sub");
 
 require('dotenv').config();
 
 // Variáveis de ambiente para configuração do banco
-const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD } = process.env;
+const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD, SUPABASE_URL, SUPABASE_KEY } = process.env;
 // Configurações do banco SQL Server
 const config = {
     user: ADASA_USERNAME,
@@ -34,6 +35,8 @@ const config = {
     database: ADASA_DATABASE,
     trustServerCertificate: true,
 };
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const router = require("express").Router();
 
@@ -74,12 +77,12 @@ router.get("/insert-or-update-subterranea-tubular", async (req, res) => {
                     let ii = i + 200
                     let now = new Date()
                     let _query = dis_sub_tub_query(i, ii);
-               
+
                     request.query(_query, async function (err, recordset) {
                         if (err) console.log(err);
 
                         let outorgas = recordset.recordsets[0].map((outorga, index) => {
-                            
+
                             if (outorga.fin_finalidade != null) {
 
                                 // conversão xml to json
@@ -111,8 +114,35 @@ router.get("/insert-or-update-subterranea-tubular", async (req, res) => {
                         });
 
                         console.log(outorgas.length)
+                        // ATUALIZAÇÃO 1
+                        // atualização do banco azure postgres adasa
+                        //insertOrUpdateSubterraneaSync(outorgas);
 
-                        insertOrUpdateSubterraneaSync(outorgas)
+                        // ATUALIZAÇÃO 2
+                        // Atualização do banco supabase postgres - pg-drainage
+                        /*const { data, error } = await supabase
+                            .from('subterranea')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }*/
+
+                        // ATUALIZAÇÃO 3
+                        // Atualização do banco supabase postgres - db=name=j-water-grants
+                        const { data, error } = await supabase
+                            .from('subterranea_sync')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }
 
                     });
 
