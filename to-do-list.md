@@ -8,3 +8,7 @@
 
 **31/01/2025**
 - [X] Migrar as tabelas de polígonos para o banco supabase (j-water-grants)
+
+**24/04/2025**
+- [] Criar um seletor de banco que será atualizado. 
+    Atualmente há três bancos sendo atualizados (postgres-drainage, postgres-j-water-grants e postgres-azure)

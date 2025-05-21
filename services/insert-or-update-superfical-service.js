@@ -19,13 +19,14 @@
 
 const sql = require("mssql");
 const xml2js = require('xml2js');
+const { createClient } = require('@supabase/supabase-js');
 const { dis_sup_query } = require("../queries/superficial-sql");
 const insertOrUpdateSuperficialSync = require("../utils/insert-or-update-sup");
 
 require('dotenv').config();
 
 // Variáveis de ambiente para configuração do banco
-const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD } = process.env;
+const { ADASA_HOST, ADASA_DATABASE, ADASA_USERNAME, ADASA_PASSWORD, SUPABASE_URL, SUPABASE_KEY } = process.env;
 // Configurações do banco SQL Server
 const config = {
     user: ADASA_USERNAME,
@@ -36,6 +37,8 @@ const config = {
 };
 
 const router = require("express").Router();
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /**
  * Rota GET para inserir ou atualizar dados de outorgas superficiais.
@@ -118,8 +121,37 @@ router.get("/insert-or-update-superficial", async (req, res) => {
                             return outorga;
                         });
 
-                        // Envia lista de outorgas para inserir ou atualizar no banco postgres
+                        // ATUALIZAÇÃO 1 - Envia lista de outorgas para inserir ou atualizar no banco postgres
                         insertOrUpdateSuperficialSync(outorgas);
+
+                        // ATUALIZAÇÃO 2
+                        // Atualização do banco supabase postgres - pg-drainage
+                        /*const { data, error } = await supabase
+                            .from('superficial')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }*/
+
+                        // ATUALIZAÇÃO 3
+                        // Atualização do banco supabase postgres - db=name=j-water-grants
+                        const { data, error } = await supabase
+                            .from('superficial_sync')
+                            .upsert(outorgas,
+                                { onConflict: 'int_id' })
+                            .select()
+                        if (error) {
+                            console.log(JSON.stringify({ message: error }))
+                        } else {
+                            console.log(JSON.stringify({ message: 'ok' }))
+                        }
+
+
+
 
                     });
 

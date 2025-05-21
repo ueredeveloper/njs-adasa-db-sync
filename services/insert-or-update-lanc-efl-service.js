@@ -98,7 +98,7 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
 
                         // ATUALIZAÇÃO 1
                         // atualização do banco azure postgres adasa
-                        // insertOrUpdateLancamentoEfluentes(outorgas);
+                         //insertOrUpdateLancamentoEfluentes(outorgas);
 
                         // ATUALIZAÇÃO 2
                         // Atualização do banco supabase postgres

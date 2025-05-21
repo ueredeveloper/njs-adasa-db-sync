@@ -106,9 +106,10 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                         // Envia lista de outorgas para inserir ou atualizar no banco postgres
                         //insertOrUpdateBarragens(outorgas);
 
+
                         // ATUALIZAÇÃO 2
                         // Atualização do banco supabase postgres
-                        /*const { data, error } = await supabase
+                       /*const { data, error } = await supabase
                             .from('barragem')
                             .upsert(outorgas,
                                 { onConflict: 'int_id' })
