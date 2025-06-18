@@ -1,0 +1,43 @@
+
+-- Adicioando otto bacias no banco de dados
+
+select * from otto_bacias
+-- contar quantas linhas
+select count(*) from otto_bacias 
+-- No json de 72937 Object id => count no notepadd++ => attributes":{"OBJECTID", 72941 cobacia
+-- 72937 => "rings":[[[
+--delete from otto_bacias
+
+
+--drop table otto_bacias
+
+--ALTER TABLE otto_bacias ADD COLUMN geometry GEOMETRY(Geometry, 4674);
+
+                            
+select * from otto_bacias _otto where ST_Contains(ST_SetSRID(ST_MakePoint(-47.6826402,-15.817893599),4674), _otto.geometry);
+
+
+SELECT 
+  ST_AsGeoJSON(geometry) AS geometry 
+FROM 
+  otto_bacias
+LIMIT 10;
+
+SELECT _otto.attributes
+FROM otto_bacias _otto
+WHERE ST_Contains(
+  _otto.geometry,
+  ST_SetSRID(ST_MakePoint(-47.444350699999973,-16.037036098999977), 4674)
+);
+
+/* Selecionar cobacia dentro do json attributes e salvar em uma variável
+*/
+SELECT 
+  _otto.attributes->>'cobacia' AS cobacia
+FROM 
+  otto_bacias _otto
+WHERE 
+  ST_Contains(
+    _otto.geometry,
+    ST_SetSRID(ST_MakePoint(-47.6827, -15.81485), 4674)
+  );

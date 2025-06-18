@@ -1,0 +1,13 @@
+node_modules
+build
+npm-debug.log
+.nyc
+.env
+.DS_Store
+
+/data/
+# arquivos json muito grandes para o github
+/json/a-d-bho-211022.json
+/json/rios-df-141223.json
+
+
