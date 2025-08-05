@@ -23,8 +23,6 @@ const { createClient } = require('@supabase/supabase-js');
 const { dis_bar_query } = require("../queries/barragem-sql");
 const insertOrUpdateBarragens = require("../utils/insert-or-update-bar");
 
-
-
 require('dotenv').config();
 
 // Variáveis de ambiente para configuração do banco
@@ -74,7 +72,8 @@ router.get("/insert-or-update-barragem", async (req, res) => {
             let promises = []; // Store all promises to track completion
 
             //for (let i = 0; i <= 22000; i = i + 200) {
-            for (let i = 10800; i <= 12200; i = i + 200) {
+            // em barragem o melhore é ir fazendo de dois mil em dois mil
+            for (let i = 8000; i <= 22000; i = i + 200) {
                 const promise = sleep(time).then(() => {
                     let ii = i + 200;
                     let now = new Date();
@@ -101,12 +100,12 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                             try {
                                 // ATUALIZAÇÃO 1
                                 // Envia lista de outorgas para inserir ou atualizar no banco postgres
-                                insertOrUpdateBarragens(outorgas);
+                                //insertOrUpdateBarragens(outorgas);
 
 
                                 // ATUALIZAÇÃO 2
                                 // Atualização do banco supabase postgres
-                               /* const { data, error } = await supabase
+                                /*const { data, error } = await supabase
                                     .from('barragem')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -119,7 +118,7 @@ router.get("/insert-or-update-barragem", async (req, res) => {
 
                                 // ATUALIZAÇÃO 3
                                 // Atualização do banco supabase postgres - db=name=j-water-grants
-                                /*const { data, error } = await supabase
+                                const { data, error } = await supabase
                                     .from('barragem_sync')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -128,7 +127,7 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                     console.log(JSON.stringify({ message: error }))
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
-                                }*/
+                                }
                             } catch (error) {
                                 console.log(error);
                             }

@@ -176,6 +176,8 @@ async function insertOrUpdateBarragens(grants) {
     `;
   
     for (const grant of grants) {
+
+      console.log(grant.int_id, grant.us_nome)
       const values = [
         grant.us_id,
         grant.us_nome,

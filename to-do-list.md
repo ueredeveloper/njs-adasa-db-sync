@@ -22,3 +22,35 @@ em alguns usuários.
 
         git rm --cached -r json/a-d-bho-211022.json 
         git rm --cached -r json/rios-df-141223.json 
+
+
+
+**31/07/2025**
+- [] Adicionar filtro de processo vencidos e outros na função `find_points_inside_hidrogeo_fraturado`
+
+Exemplo: find all points in a system
+````
+-- filtra por tipo de poço e exclui situação de processos 'em análise', 'obturado' e 'indeferidos'
+      select * from subterranea _sub where st_contains(hg_info_shape.shape, _sub.int_shape) and _sub.tp_id = find_all_points_in_a_subsystem.tp_id and _sub.sp_id not in (2,7,9)
+
+```
+
+**05/08/2025**
+- [] Criar cálculo de número de poços e porcentagem de utilização nos subsistemas.
+- [] Criar colunas nas tabelas hidrogeo fraturado e hidrogeo poroso
+
+```
+-- Adiciona colunas para salvar quantidade de poços e porcentagem utilizada
+alter table hidrogeo_fraturado
+add column pct_utilizada double precision default 0.0
+add column qtd_pocos integer default 0
+
+-- Verifica uma linha da tabela
+select _hg.qtd_pocos, _hg.pct_utilizada from hidrogeo_fraturado _hg
+where _hg.objectid = 1
+
+-- Faz update dos valores
+update hidrogeo_fraturado
+set qtd_pocos = 1.0, pct_utilizada = 1.0 where objectid = 1
+
+```

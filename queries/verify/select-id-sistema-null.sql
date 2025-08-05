@@ -1,6 +1,9 @@
--- Esta consulta retorna as interferÍncias subterr‚neas cujos dados sobre o sistema aquÌfero ainda n„o foram definidos,
--- ou seja, onde o campo ID_SISTEMA est· nulo. Isso indica que o sistema (ex: fraturado, R3 ou poroso P1) ainda n„o foi informado.
--- A query tambÈm retorna informaÁıes complementares como o n˙mero do processo, nome do usu·rio, tipo de poÁo, subsistema e endereÁo.
+-- Esta consulta retorna as interfer√™ncias subterr√¢neas cujos dados sobre o sistema aqu√≠fero ainda n√£o foram definidos,
+-- ou seja, onde o campo ID_SISTEMA est√° nulo. Isso indica que o sistema (ex: fraturado, R3 ou poroso P1) ainda n√£o foi informado.
+-- A query tamb√©m retorna informa√ß√µes complementares como o n√∫mero do processo, nome do usu√°rio, tipo de po√ßo, subsistema e endere√ßo.
+
+--24/07/2025 Solicitei que o lucas mude o tipo po√ßo para tipo tubular raso. 
+
 
 SELECT _SUB.[ID_INTERFERENCIA]
 	  ,_INT.NUM_PROCESSO
@@ -14,4 +17,7 @@ SELECT _SUB.[ID_INTERFERENCIA]
   LEFT JOIN [gisadmin].[INTERFERENCIA] _INT ON _INT.ID_INTERFERENCIA = _SUB.ID_INTERFERENCIA
   LEFT JOIN [gisadmin].[EMPREENDIMENTO] _EMP ON _EMP.ID_EMPREENDIMENTO = _INT.ID_EMPREENDIMENTO
   LEFT JOIN [gisadmin].[USUARIO] _US ON _US.ID_USUARIO = _EMP.ID_USUARIO
-  WHERE _SUB.[ID_SISTEMA] IS NULL
+  -- remove processos de campanha 190000763/2005
+  -- filtra por tipo de po√ßo e exclui situa√ß√£o de processos 'em an√°lise', 'obturado' e 'indeferidos' e 'irregulares'
+  WHERE _SUB.[ID_SISTEMA] IS NULL AND _SUB.ID_TIPO_POCO IS NULL AND _INT.NUM_PROCESSO <> '190000763/2005' AND _INT.ID_SITUACAO NOT IN (2,7,9,10)
+  

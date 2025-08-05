@@ -10,8 +10,9 @@
 
 import fetchInsertOrUpdateLancEflService from "../services/fetch-insert-or-update-lanc-efl-service.js";
 import fetchInsertOrUpdateLancPluService from "../services/fetch-insert-or-update-lanc-plu-service copy.js";
+import fetchInsertOrUpdatePoroso from "../services/fetch-insert-or-update-poroso-service.js";
 import {
-    fetchInsertOrUpdateBarragens, fetchInsertOrUpdateSubterraneaManual,
+    fetchInsertOrUpdateBarragens, fetchInsertOrUpdateFraturado, fetchInsertOrUpdateSubterraneaManual,
     fetchInsertOrUpdateSubterraneaTubular, fetchInsertOrUpdateSuperficiais
 } from "../services/index.js";
 
@@ -55,7 +56,8 @@ const ManageDataBaseView = {
                 <button id="btn-barragem-sync" style="margin:5px;">Atualizar - Barragem</button>
                 <button id="btn-lanc-plu-sync" style="margin:5px;">Atualizar - Lançamentos Pluviais</button>
                 <button id="btn-lanc-efl-sync" style="margin:5px;">Atualizar - Lançamentos Efluentes</button>
-                
+                <button id="btn-fraturado-sync" style="margin:5px;">Atualizar - Fraturado  - Nº Poços e Porcentagem</button>
+                <button id="btn-poroso-sync" style="margin:5px;">Atualizar - Poroso - Nº Poços e Porcentagem</button>
             </div>
             `);
 
@@ -142,6 +144,36 @@ const ManageDataBaseView = {
                 alert(error);
             }
         });
+
+        $('#btn-fraturado-sync').on('click', async () => {
+            try {
+
+                console.log("Atualizar Quantidade de Poços no Fraturado! ")
+                let message = await fetchInsertOrUpdateFraturado();
+
+                console.log(message);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error);
+            }
+        });
+
+
+        $('#btn-poroso-sync').on('click', async () => {
+            try {
+
+                console.log("Atualizar Quantidade de Poços no Poroso! ")
+                let message = await fetchInsertOrUpdatePoroso();
+
+                console.log(message);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error);
+            }
+        });
+
 
 
     }

@@ -1,0 +1,29 @@
+
+/*Captura a vazão anual de uma outorga subterrânea ou pela vazão diária 
+ou pelo somatórioa da vazão por hora e as horas de captção
+*/
+USE SRH;
+SELECT
+CASE WHEN _DT.VAZAO_DIA IS NOT NULL 
+	-- calcula pela vazão diária
+	THEN SUM(_DT.VAZAO_DIA/1000 * _DT.QT_DIAS)
+	-- faz o somatório da vazão por por hora e horas de captação
+	ELSE SUM((_DT.VAZAO_HORA*_DT.TEMPO_CAPTACAO)/1000 * _DT.QT_DIAS)
+
+END AS DEMANDA
+FROM [SRH].[gisadmin].[DEMANDA_TOTAL_SUB] _DT
+WHERE _DT.ID_INTERFERENCIA = 6331
+GROUP BY _DT.VAZAO_DIA
+
+SELECT * FROM gisadmin.DEMANDA_TOTAL_SUB _DT 
+WHERE _DT.ID_INTERFERENCIA = 6331
+
+
+-- Testes
+
+-- BUSCAR INTERFERÊNCIA PELO NOME DO USUÁRIO
+SELECT _US.NOME FROM gisadmin.INTERFERENCIA _INT
+LEFT JOIN gisadmin.EMPREENDIMENTO _EMP ON _EMP.ID_EMPREENDIMENTO = _INT.ID_EMPREENDIMENTO
+LEFT JOIN gisadmin.USUARIO _US ON _US.ID_USUARIO = _EMP.ID_USUARIO
+--WHERE _US.NOME LIKE '%ALTAIR GON%' -- 5552
+WHERE _INT.ID_INTERFERENCIA  = 3539

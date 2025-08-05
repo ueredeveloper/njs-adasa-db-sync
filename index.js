@@ -8,6 +8,8 @@ const {
   insertOrUpdateSuperficialService, insertOrUpdateBarragemService,
   insertOrUpdateLancamentoEfluentesService,
   insertOrUpdateLancamentoPluviaisService,
+  insertOrUpdateFraturadoService,
+  insertOrUpdatePorosoService,
 } = require('./services');
 
 const app = express();
@@ -22,6 +24,8 @@ app.use('/services', insertOrUpdateSuperficialService);
 app.use('/services', insertOrUpdateBarragemService);
 app.use('/services', insertOrUpdateLancamentoEfluentesService);
 app.use('/services', insertOrUpdateLancamentoPluviaisService);
+app.use('/services', insertOrUpdateFraturadoService);
+app.use('/services', insertOrUpdatePorosoService)
 
 app.use(express.static(path.join(__dirname, 'public')));
 

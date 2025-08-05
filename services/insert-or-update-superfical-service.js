@@ -129,7 +129,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
                             });
 
                             // ATUALIZAÇÃO 1 - Envia lista de outorgas para inserir ou atualizar no banco postgres
-                            insertOrUpdateSuperficialSync(outorgas);
+                            //insertOrUpdateSuperficialSync(outorgas);
 
                             // ATUALIZAÇÃO 2
                             // Atualização do banco supabase postgres - pg-drainage
@@ -146,7 +146,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
 
                             // ATUALIZAÇÃO 3
                             // Atualização do banco supabase postgres - db=name=j-water-grants
-                            /*const { data, error } = await supabase
+                            const { data, error } = await supabase
                                 .from('superficial_sync')
                                 .upsert(outorgas,
                                     { onConflict: 'int_id' })
@@ -155,7 +155,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
                                 console.log(JSON.stringify({ message: error }))
                             } else {
                                 console.log(JSON.stringify({ message: 'ok' }))
-                            }*/
+                            }
 
                             resolve();
                         });
