@@ -29,15 +29,16 @@ em alguns usuários.
 - [] Adicionar filtro de processo vencidos e outros na função `find_points_inside_hidrogeo_fraturado`
 
 Exemplo: find all points in a system
-````
+
+```
 -- filtra por tipo de poço e exclui situação de processos 'em análise', 'obturado' e 'indeferidos'
       select * from subterranea _sub where st_contains(hg_info_shape.shape, _sub.int_shape) and _sub.tp_id = find_all_points_in_a_subsystem.tp_id and _sub.sp_id not in (2,7,9)
 
 ```
 
 **05/08/2025**
-- [] Criar cálculo de número de poços e porcentagem de utilização nos subsistemas.
-- [] Criar colunas nas tabelas hidrogeo fraturado e hidrogeo poroso
+- [X] Criar cálculo de número de poços e porcentagem de utilização nos subsistemas.
+- [X] Criar colunas nas tabelas hidrogeo fraturado e hidrogeo poroso
 
 ```
 -- Adiciona colunas para salvar quantidade de poços e porcentagem utilizada
@@ -53,4 +54,13 @@ where _hg.objectid = 1
 update hidrogeo_fraturado
 set qtd_pocos = 1.0, pct_utilizada = 1.0 where objectid = 1
 
+```
+**12/08/2025**
+- [X] Editar `uh_nome` nas tabelas hidrogeo fraturado e poroso, `uh_label = 'UH 38'`, pois está escrito Rio Pipriripal e é Rio Pipiripau.
+
+```
+select hg.sistema,  hg.uh_label, hg.uh_nome from hidrogeo_poroso hg
+where hg.uh_label = 'UH 38'
+
+update hidrogeo_poroso set uh_nome = 'Rio Pipiripau' where uh_label = 'UH 38'
 ```

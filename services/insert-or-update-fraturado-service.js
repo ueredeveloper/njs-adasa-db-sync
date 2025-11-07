@@ -83,9 +83,10 @@ router.get("/insert-or-update-fraturado", async (req, res) => {
                         insertOrUpdateFraturado(recordset.recordset[0]);
                     }
 
-                    // ATUALIZAÇÃO 2
+                    // 14/08/2025 - Só estou fazendo a atualização do poroso e fraturado no postgres
+                    /*// ATUALIZAÇÃO 2
                     // Atualização do banco supabase postgres
-                    /*const { data, error } = await supabase
+                    const { data, error } = await supabase
                         .from('barragem')
                         .upsert(outorgas,
                             { onConflict: 'int_id' })

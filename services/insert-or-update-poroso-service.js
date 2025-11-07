@@ -65,7 +65,7 @@ router.get("/insert-or-update-poroso", async (req, res) => {
 
         for (let objectId = 1; objectId <= 141; objectId++) {
 
-            let _query = calculate_number_of_interferecies_and_percentage_poroso (objectId);
+            let _query = calculate_number_of_interferecies_and_percentage_poroso(objectId);
 
             request.query(_query, async function (err, recordset) {
                 if (err) {
@@ -77,9 +77,7 @@ router.get("/insert-or-update-poroso", async (req, res) => {
                     // Envia lista de outorgas para inserir ou atualizar no banco postgres
                     if (recordset.recordset[0] !== undefined) {
                         //response.push(recordset.recordset[0])
-
                         console.log(recordset.recordset[0])
-
                         insertOrUpdatePoroso(recordset.recordset[0]);
                     }
 
@@ -113,7 +111,7 @@ router.get("/insert-or-update-poroso", async (req, res) => {
                 } catch (error) {
                     console.log(error, recordset);
                 }
-               
+
 
             });
 

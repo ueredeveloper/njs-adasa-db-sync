@@ -1,5 +1,5 @@
 /**
- * Rota para sincronizar dados de outorgas superficiais entre um banco SQL Server local e um banco PostgreSQL no Azure.
+ * Rota para sincronizar dados de outorgas de barragens entre um banco SQL Server local e um banco PostgreSQL no Azure.
  *
  * @module routers/insertOrUpdateSuperficialSync
  * @requires express
@@ -11,7 +11,7 @@
  *
  * @description
  * Esta rota conecta-se ao banco de dados SQL Server local,
- * executa uma consulta para obter os dados de outorgas superficiais, converte
+ * executa uma consulta para obter os dados de outorgas de barragem, converte
  * campos em XML para JSON e envia os dados convertidos para um banco PostgreSQL hospedado no Azure.
  */
 
@@ -95,17 +95,19 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                 return outorga;
                             });
 
-                            console.log(outorgas.length);
+                            console.log('quantidade enviada: ', outorgas.length);
 
                             try {
                                 // ATUALIZAÇÃO 1
                                 // Envia lista de outorgas para inserir ou atualizar no banco postgres
-                                //insertOrUpdateBarragens(outorgas);
+                                insertOrUpdateBarragens(outorgas);
 
+                                /*
 
+                                
                                 // ATUALIZAÇÃO 2
-                                // Atualização do banco supabase postgres
-                                /*const { data, error } = await supabase
+                                // Atualização do banco supabase postgres - db=name=j-water-grants
+                                const { data, error } = await supabase
                                     .from('barragem')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -115,9 +117,11 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
                                 }*/
+                               
+                                
 
                                 // ATUALIZAÇÃO 3
-                                // Atualização do banco supabase postgres - db=name=j-water-grants
+                                // Atualização do banco supabase postgres
                                 const { data, error } = await supabase
                                     .from('barragem_sync')
                                     .upsert(outorgas,
@@ -128,6 +132,8 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
                                 }
+
+                               
                             } catch (error) {
                                 console.log(error);
                             }

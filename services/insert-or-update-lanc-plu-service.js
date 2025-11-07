@@ -80,11 +80,12 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
 
                                 // ATUALIZAÇÃO 1
                                 // atualização do banco azure postgres adasa
-                                //fetchInsertOrUpdateLancamentoPluviais(outorgas);
+                                fetchInsertOrUpdateLancamentoPluviais(outorgas);
 
+                                /*
                                 // ATUALIZAÇÃO 2
                                 // Atualização do banco supabase postgres
-                                /*const { data, error } = await supabase
+                                const { data, error } = await supabase
                                      .from('lancamento_pluviais')
                                      .upsert(outorgas,
                                          { onConflict: 'int_id' })

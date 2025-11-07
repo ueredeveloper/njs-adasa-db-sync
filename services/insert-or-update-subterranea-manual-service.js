@@ -122,11 +122,13 @@ router.get("/insert-or-update-subterranea-manual", async (req, res) => {
                             });
 
                             console.log(outorgas.length)
+                           
                             // ATUALIZAÇÃO 1 - do banco azure postgres adasa
-                            // insertOrUpdateSubterraneaSync(outorgas)
+                             insertOrUpdateSubterraneaSync(outorgas)
 
+                             /*
                             // ATUALIZAÇÃO 2 -  do banco supabase postgres - db-name=pg-drainage
-                            /*const { data, error } = await supabase
+                            const { data, error } = await supabase
                                 .from('subterranea')
                                 .upsert(outorgas,
                                     { onConflict: 'int_id' })
@@ -135,7 +137,8 @@ router.get("/insert-or-update-subterranea-manual", async (req, res) => {
                                 console.log(JSON.stringify({ message: error }))
                             } else {
                                 console.log(JSON.stringify({ message: 'ok' }))
-                            }*/
+                            }
+                                */
 
                             // ATUALIZAÇÃO 3 -  do banco supabase postgres - db=name=j-water-grants
                             const { data, error } = await supabase

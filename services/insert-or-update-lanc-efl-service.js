@@ -100,11 +100,12 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
                             try {
                                 // ATUALIZAÇÃO 1
                                 // atualização do banco azure postgres adasa
-                               //insertOrUpdateLancamentoEfluentes(outorgas);
+                               insertOrUpdateLancamentoEfluentes(outorgas);
+                               /*
 
                                 // ATUALIZAÇÃO 2
                                 // Atualização do banco supabase postgres
-                                /*const { data, error } = await supabase
+                                const { data, error } = await supabase
                                     .from('lancamento_efluentes')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -116,6 +117,7 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
                                 }*/
 
                                 // ATUALIZAÇÃO 3
+                                
                                 // Atualização do banco supabase postgres - db=name=j-water-grants
                                 const { data, error } = await supabase
                                     .from('lancamento_efluentes_sync')
