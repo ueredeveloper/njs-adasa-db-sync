@@ -121,7 +121,7 @@ router.get("/insert-or-update-subterranea-manual", async (req, res) => {
                                 return outorga;
                             });
 
-                            console.log(outorgas.length)
+                            console.log('Quantidade de outorgas para atualizar: ', outorgas.length)
                            
                             // ATUALIZAÇÃO 1 - do banco azure postgres adasa
                              insertOrUpdateSubterraneaSync(outorgas)
@@ -141,7 +141,7 @@ router.get("/insert-or-update-subterranea-manual", async (req, res) => {
                                 */
 
                             // ATUALIZAÇÃO 3 -  do banco supabase postgres - db=name=j-water-grants
-                            const { data, error } = await supabase
+                           /* const { data, error } = await supabase
                                 .from('subterranea_sync')
                                 .upsert(outorgas,
                                     { onConflict: 'int_id' })
@@ -150,7 +150,7 @@ router.get("/insert-or-update-subterranea-manual", async (req, res) => {
                                 console.log(JSON.stringify({ message: error }))
                             } else {
                                 console.log(JSON.stringify({ message: 'ok' }))
-                            }
+                            }*/
 
                             resolve();
                         });

@@ -74,7 +74,7 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
                                 return outorga;
                             });
 
-                            console.log(outorgas.length);
+                              console.log('Quantidade de outorgas para atualizar: ', outorgas.length)
 
                             try {
 
@@ -98,7 +98,7 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
 
                                 // ATUALIZAÇÃO 3    
                                 // Atualização do banco supabase postgres - db=name=j-water-grants
-                               const { data, error } = await supabase
+                               /*const { data, error } = await supabase
                                     .from('lancamento_pluviais_sync')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -107,7 +107,7 @@ router.get("/insert-or-update-lancamento-pluviais", async (req, res) => {
                                     console.log(JSON.stringify({ message: error }))
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
-                                }
+                                }*/
 
                             } catch (error) {
                                 console.log(error);

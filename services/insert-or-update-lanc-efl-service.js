@@ -95,7 +95,7 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
                                 return outorga;
                             });
 
-                            console.log(outorgas.length);
+                               console.log('Quantidade de outorgas para atualizar: ', outorgas.length)
 
                             try {
                                 // ATUALIZAÇÃO 1
@@ -119,7 +119,8 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
                                 // ATUALIZAÇÃO 3
                                 
                                 // Atualização do banco supabase postgres - db=name=j-water-grants
-                                const { data, error } = await supabase
+                               
+                               /* const { data, error } = await supabase
                                     .from('lancamento_efluentes_sync')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -129,6 +130,9 @@ router.get("/insert-or-update-lancamento-efluentes", async (req, res) => {
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
                                 }
+                                */
+
+
                             } catch (error) {
                                 console.log(error);
                             }

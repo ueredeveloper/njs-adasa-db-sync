@@ -95,7 +95,7 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                 return outorga;
                             });
 
-                            console.log('quantidade enviada: ', outorgas.length);
+                               console.log('Quantidade de outorgas para atualizar: ', outorgas.length)
 
                             try {
                                 // ATUALIZAÇÃO 1
@@ -122,7 +122,7 @@ router.get("/insert-or-update-barragem", async (req, res) => {
 
                                 // ATUALIZAÇÃO 3
                                 // Atualização do banco supabase postgres
-                                const { data, error } = await supabase
+                               /* const { data, error } = await supabase
                                     .from('barragem_sync')
                                     .upsert(outorgas,
                                         { onConflict: 'int_id' })
@@ -131,7 +131,7 @@ router.get("/insert-or-update-barragem", async (req, res) => {
                                     console.log(JSON.stringify({ message: error }))
                                 } else {
                                     console.log(JSON.stringify({ message: 'ok' }))
-                                }
+                                }*/
 
                                
                             } catch (error) {

@@ -64,3 +64,10 @@ where hg.uh_label = 'UH 38'
 
 update hidrogeo_poroso set uh_nome = 'Rio Pipiripau' where uh_label = 'UH 38'
 ```
+
+## 17/11/2025
+
+- [] Quantidade de outorgas subterrâneas antes de adicionar as outorgas manuais: 9724
+
+        Adicionado 32 novas outorgas manuais.
+        Adicionado 50 outorgas tubulares.

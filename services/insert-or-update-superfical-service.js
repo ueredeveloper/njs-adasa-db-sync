@@ -148,7 +148,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
                             */
                             // ATUALIZAÇÃO 3
                             // Atualização do banco supabase postgres - db=name=j-water-grants
-                            const { data, error } = await supabase
+                           /* const { data, error } = await supabase
                                 .from('superficial_sync')
                                 .upsert(outorgas,
                                     { onConflict: 'int_id' })
@@ -157,7 +157,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
                                 console.log(JSON.stringify({ message: error }))
                             } else {
                                 console.log(JSON.stringify({ message: 'ok' }))
-                            }
+                            }*/
 
                             resolve();
                         });
@@ -175,12 +175,7 @@ router.get("/insert-or-update-superficial", async (req, res) => {
             // Process complete - send alert
             console.log("Update - Superficial: Completo! ");
             
-            /*res.send(`
-                <script>
-                    alert("Processo de atualização superficial concluído!\\n\\nTotal de iterações: ${completedIterations}\\nInício: ${begin.toLocaleTimeString()}\\nTérmino: ${new Date().toLocaleTimeString()}\\nDuração: ${((new Date() - begin)/1000} segundos");
-                    window.history.back();
-                </script>
-            `);*/
+            
         }
 
         saveEveryHundred();
